@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+	<error-handler name="custom-error-handler" doc:id="218dcc8c-8c2f-4afe-b39e-6c9dfaa1d063" >
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e3608367-1796-436c-8a6c-1caed8e17faf" type="ANAPLAN:CONNECTIVITY,ANAPLAN:RETRY_EXHAUSTED">
+			<logger level="INFO" doc:name="Logger-error-start-flow" doc:id="4d550545-799e-4861-b1de-f770bc1f857b" message="Logging at the start of the error flow while calling Anaplan functions"/>
+			<set-variable value="#[502]" doc:name="Set Variable" doc:id="60299427-63cc-4b6b-8f83-1d8f562c3326" variableName="httpStatus"/>
+			<flow-ref doc:name="api-common-error-main-flow" doc:id="b0896e98-017d-4108-9d0c-a9379bfc71ef" name="api-common-error-main-flow" />
+			<logger level="INFO" doc:name="Logger-error-end-flow" doc:id="d9400a51-4923-48c3-af2f-ed9d90cd287e" message="Logging at the end of the error flow while calling Anaplan functions"/>
+		</on-error-continue>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e7ed6eef-e43d-41b6-a729-f27e44f87a31" type="SALESFORCE:CONNECTIVITY, SALESFORCE:INVALID_INPUT, SALESFORCE:INVALID_RESPONSE, SALESFORCE:LIMIT_EXCEEDED, SALESFORCE:MUTUAL_AUTHENTICATION_FAILED, SALESFORCE:NOT_FOUND, SALESFORCE:RETRY_EXHAUSTED, SALESFORCE:TIMEOUT">
+			<logger level="INFO" doc:name="Logger-error-start-flow" doc:id="0cb4df78-7476-45a9-9654-edec3e8e97e3" message="Logging at the start of the error flow while calling Salesforce functions"/>
+			<set-variable value="#[503]" doc:name="Set Variable" doc:id="cd5b6741-fd31-4616-9893-95ed7b89780a" variableName="httpStatus" />
+			<flow-ref doc:name="api-common-error-main-flow" doc:id="ddd4efbe-3a18-434a-8ff0-6223e7ab89aa" name="api-common-error-main-flow"/>
+			<logger level="INFO" doc:name="Logger-error-end-flow" doc:id="874356e6-b43d-4ec7-a874-ffd6e60e41bc" message="Logging at the end of the error flow while calling Salesforce functions"/>
+		</on-error-continue>
+	</error-handler>
+	<flow name="api-common-error-main-flow" doc:id="1e78eddb-240a-46b6-b6b3-3d56f90889cc" >
+		<ee:transform doc:name="Response Error" doc:id="a62b3c0c-8dab-4461-ae33-fc3323033f03">
+				<ee:message>
+        <ee:set-payload resource="dwl/error-to-json.dwl" />
+				</ee:message>
+			</ee:transform>
+	</flow>
+</mule>

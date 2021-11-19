@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="deleteEx" format="json">
+      <types:shape format="weave" example="examples/deleteEx.json"><![CDATA[%dw 2.0
+
+type deleteEx = Array<{| deleteActionName: String |}> {"example": "[{\\\"deleteActionName\\\":\\\"Delete Prev Employees\\\"}]"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="exportSFDCEx" format="json">
+      <types:shape format="weave" example="examples/exportSFDCEx.json"><![CDATA[%dw 2.0
+
+type exportSFDCEx = Array<{|  sfdcObject: String,   exportName: String|}> {"example": "[{\\\"sfdcObject\\\":\\\"AnaplanLocation__c\\\",\\\"exportName\\\":\\\"SYS04 Location Details from Locations.csv\\\"}]"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="dataToSFDCEx" format="json">
+      <types:shape format="weave" example="examples/SFDCImportEx.json"><![CDATA[%dw 2.0
+
+type dataToSFDCEx = Array<{|  Code__c: String,   Name: String,   Department__c: String,   Country__c: String,   Region__c: String,   salary__c: String|}> {"example": "[{\\\"Code__c\\\":\\\"024\\\",\\\"Name\\\":\\\"Josphine Huffer\\\",\\\"Department__c\\\":\\\"Sales\\\",\\\"Country__c\\\":\\\"Brazil\\\",\\\"Region__c\\\":\\\"Americas\\\",\\\"salary__c\\\":\\\"58000\\\"},{\\\"Code__c\\\":\\\"026\\\",\\\"Name\\\":\\\"Theda Dickerson\\\",\\\"Department__c\\\":\\\"Sales\\\",\\\"Country__c\\\":\\\"New Zealand\\\",\\\"Region__c\\\":\\\"Asia Pacific\\\",\\\"salary__c\\\":\\\"45000\\\"}]"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="uploadFileSfdc" format="json">
+      <types:shape format="weave" example="examples/uploadsfdcEx.json"><![CDATA[%dw 2.0
+
+type uploadFileSfdc = Array<{|  sfdcObject: String,   fileName: String,   fileChunkSize: Number {"typeId": "int"}|}> {"example": "[{\\\"sfdcObject\\\":\\\"AnaplanLocation__c\\\",\\\"fileName\\\":\\\"SYS04 Location Details from Locations.csv\\\",\\\"fileChunkSize\\\":5}]"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="exportDescribeEx" format="json">
+      <types:shape format="weave" example="examples/exportDescribeEx.json"><![CDATA[%dw 2.0
+
+type exportDescribeEx = Array<{|  exportName: String,   localeName: String,   mappingParameters: Array<{|    entityType: String,     entityName: String  |}>
+|}> {"example": "[{\\\"exportName\\\":\\\"P&L Actual and Budget - Headcount.xls\\\",\\\"localeName\\\":\\\"en_US\\\",\\\"mappingParameters\\\":[{\\\"entityType\\\":\\\"Version\\\",\\\"entityName\\\":\\\"Actual\\\"}]}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#36b5bc52-ad14-4146-82ee-e7168655e9d8">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="deleteEx"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#7bdbd788-2b81-474e-b8c6-8faff1bc6c1c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="exportSFDCEx"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#ff19d5ef-d90e-4c2c-9086-8d1fece58886">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="dataToSFDCEx"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#6a80b2c8-e87e-45df-ba54-db8595d1947c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="uploadFileSfdc"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#5e70fe23-37a9-4216-8131-d9c9e6cee6dc">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="exportDescribeEx"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#7d0f8ee3-4d90-4e85-8bfb-473690778dcc"/>
+  <types:enrichment select="#007db369-3980-4b81-aa25-7d66515619cd"/>
+  <types:enrichment select="#ef788d74-0efc-4adf-9a00-e1625c2cd28e"/>
+  <types:enrichment select="#ac1411a4-6415-4ad6-a269-8e6807a05f31"/>
+  <types:enrichment select="#f7500a3f-2421-4871-9d8f-2d438dbc8480"/>
+  <types:enrichment select="#6dc5c107-74d7-4992-bd96-ccda515fba82"/>
+  <types:enrichment select="#9c4a5a0e-1ad1-4347-ba61-e300a2744b38"/>
+</types:mule>

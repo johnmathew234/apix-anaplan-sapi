@@ -1,0 +1,70 @@
+output application/java 
+---
+ {
+  nestedResults: null,
+  dumpFiles: null,
+  failureDumpAvailable: false,
+  objectName: null,
+  details: [
+    {
+      occurrences: 0,
+      values: [
+        "hierarchyName", 
+        "G3 Location", 
+        "successRowCount", 
+        "38", 
+        "successCreateCount", 
+        "0", 
+        "successUpdateCount", 
+        "38", 
+        "warningsRowCount", 
+        "0", 
+        "warningsCreateCount", 
+        "0", 
+        "warningsUpdateCount", 
+        "0", 
+        "failedCount", 
+        "0", 
+        "ignoredCount", 
+        "0", 
+        "totalRowCount", 
+        "38", 
+        "totalCreateCount", 
+        "0", 
+        "totalUpdateCount", 
+        "38", 
+        "invalidCount", 
+        "0", 
+        "updatedCount", 
+        "38", 
+        "renamedCount", 
+        "38", 
+        "createdCount", 
+        "0"
+      ],
+      "type": "hierarchyRowsProcessed",
+      localMessageText: "G3 Location: 38 (0/38) rows successful, 0 ignored ",
+      valueMap: {
+        ignoredCount: "0",
+        totalUpdateCount: "38",
+        warningsUpdateCount: "0",
+        successUpdateCount: "38",
+        hierarchyName: "G3 Location",
+        totalCreateCount: "0",
+        warningsCreateCount: "0",
+        successRowCount: "38",
+        failedCount: "0",
+        updatedCount: "38",
+        invalidCount: "0",
+        renamedCount: "38",
+        successCreateCount: "0",
+        warningsRowCount: "0",
+        totalRowCount: "38",
+        createdCount: "0"
+      }
+    }
+  ],
+  rowCount: 0,
+  objectId: "112000000044",
+  successful: false
+}

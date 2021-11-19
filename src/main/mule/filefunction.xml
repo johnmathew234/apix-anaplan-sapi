@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:anaplan="http://www.mulesoft.org/schema/mule/anaplan"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/anaplan http://www.mulesoft.org/schema/mule/anaplan/current/mule-anaplan.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="import-describe-flow" doc:id="4864d359-ad4f-4ecb-a841-521587297dce" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="454f484b-15c1-43e0-82d6-30bbec4265f2" message="Logging at the start of flow for Import describe function"/>
+		<ee:transform doc:name="Retriving Import ID" doc:id="31edc524-f674-4b76-8e14-0b040b7e0bfd" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="importId" ><![CDATA["importID" : payload[0].importName]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:describe-import doc:name="Describe import Anaplan" doc:id="650ea9e8-bba0-4bc3-907b-21bd3d6097e8" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" importId="#[vars.importId.importID]">
+			<anaplan:payload ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"localeName" : payload[0].localeName,
+	"mappingParameters" : payload[0].mappingParameters
+}]]]></anaplan:payload>
+		</anaplan:describe-import>
+		<logger level="INFO" doc:name="Logger-Post-API-call" doc:id="3baaff65-bc31-4e53-9fec-2e883242ff03" message="Logging after the successful call of describe import Anaplan Connector"/>
+		<ee:transform doc:name="Transform to JSON" doc:id="ef788d74-0efc-4adf-9a00-e1625c2cd28e" >
+			<ee:message >
+				<ee:set-payload resource="dwl/payload-to-json.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="573a84e2-a30e-47b3-9342-4345f7e2a98a" message="Logging at the end of the describe import flow"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="import-file-flow" doc:id="4086b46a-a9ad-4443-8b5e-16de6c0b93b6" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="43735b00-8b50-4f70-9ec8-396ea04a10ec" message="Logging at the start of flow for Importing file to Physical Location function"/>
+		<ee:transform doc:name="Retriving Import ID" doc:id="7d0f8ee3-4d90-4e85-8bfb-473690778dcc" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="importId" ><![CDATA["importID" : payload[0].importName]]></ee:set-variable>
+				<ee:set-variable variableName="importFilePathName" ><![CDATA[%dw 2.0
+output applicaton/json
+---
+p('import.filePath') replace "/C:/" with "C:/" ++ payload[0].importFileName as String]]></ee:set-variable>
+        <ee:set-variable variableName="chunkPath" ><![CDATA[%dw 2.0
+output applicaton/json
+---
+p('import.chunkPath') replace "/C:/" with "C:/"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:execute-import-with-files doc:name="Import Files from Location" doc:id="6cf358fc-7e24-4d3d-9804-b0c4488bfd8d" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" importId="#[vars.importId.importID]" sourceFilePath='#[vars.importFilePathName]' tmpFolderPath="#[vars.chunkPath]" chunkSize="#[payload[0].chunkSize]"/>
+		<choice doc:name="Choice" doc:id="f26b535d-56ad-422f-8cbd-52056aee89bb" >
+			<when expression="#[payload != null and payload.successful == true]">
+				<logger level="INFO" doc:name="Logger-Post-API-Success" doc:id="41f534d7-7bdb-4a98-841b-ae2497cdbd73" message="Logging after the successful call of importing the file from Physical location"/>
+				<ee:transform doc:name="Transform to JSON" doc:id="e70eb152-b3f6-4e03-823b-7dd84b2c6460">
+			<ee:message>
+            <ee:set-payload resource="dwl/payload-to-json.dwl" />
+			</ee:message>
+		</ee:transform>
+			
+</when>
+			<when expression="#[payload != null and payload.successful == false]">
+				<logger level="INFO" doc:name="Logger-Post-API-Failure" doc:id="ff442f7d-083d-43f1-b0e0-2b1709d7cddf" message="Logging after the failure of importing the file from location "/>
+				<ee:transform doc:name="Transform to JSON" doc:id="7b4bb29b-7727-4df2-924d-b73a96116450" >
+					<ee:message >
+            <ee:set-payload resource="dwl/payload-to-json.dwl" />
+					</ee:message>
+				</ee:transform>
+			
+</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-payload-null" doc:id="b5de5d80-41a5-48f3-bb0a-adb6e6749f73" message="Logging after the importing of the file from location "/>
+				<ee:transform doc:name="Transform to JSON" doc:id="468119af-0da0-4722-8efd-feefda0be575">
+					<ee:message>
+            <ee:set-payload resource="dwl/import-file-failure.dwl" />
+					</ee:message>
+				</ee:transform>
+			
+</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="e90142bc-d3f0-406a-924d-d5e8f571f609" message="Logging at the end of flow for Importing file from Physical Location to Anaplan Model"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="export-describe-flow" doc:id="850b99ed-1f32-4253-848b-27652ae0fb0b" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="a120b437-21de-4eb4-b342-290cfde2aab4" message="Logging at the start of flow for Export describe function"/>
+		<ee:transform doc:name="Retriving Export ID" doc:id="5e70fe23-37a9-4216-8131-d9c9e6cee6dc">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="exportId" ><![CDATA["exportID" : payload[0].exportName]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:describe-export doc:name="Describe export Anaplan" doc:id="9e06f412-7202-4f25-9b57-2c63e1dd0988" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" exportId="#[vars.exportId.exportID]">
+			<anaplan:payload ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"localeName" : payload[0].localeName,
+	"mappingParameters" : payload[0].mappingParameters
+}]]]></anaplan:payload>
+		</anaplan:describe-export>
+		<logger level="INFO" doc:name="Logger-Post-API-Call" doc:id="75f53bfc-616e-4e3e-97e6-9ac00939787b" message="Logging after the successful call of describe export Anaplan Connector"/>
+		<ee:transform doc:name="Transform to JSON" doc:id="7d42eef7-e372-4d65-b3ca-24ee66ef8827">
+			<ee:message>
+        <ee:set-payload resource="dwl/payload-to-json.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="4f89d614-be91-4922-aa3f-9b9dd4dbab9d" message="Logging at the end of the describe export flow "/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="export-file-flow" doc:id="075f1fdb-e2bd-4a0a-9df0-df671a4d4a3a" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="1e2aa97a-1161-4464-aa50-16f460b3673f" message="Logging at the start of flow for Exporting file to Physical Location function "/>
+		<ee:transform doc:name="Retriving Export ID" doc:id="007db369-3980-4b81-aa25-7d66515619cd" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="exportId" ><![CDATA["exportID" : payload[0].exportName]]></ee:set-variable>
+        <ee:set-variable variableName="exportFilePath" ><![CDATA[%dw 2.0
+output application/json
+---
+"exportFilePath" : p('export.filePath') replace "/C:/" with "C:/"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:execute-export-with-files doc:name="Export File to Location" doc:id="0747eef4-6351-47e9-b70f-51360229c907" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" exportId="#[vars.exportId.exportID]" tmpFolderPath="#[vars.exportFilePath.exportFilePath]"/>
+		<logger level="INFO" doc:name="Logger-Post-API-Call" doc:id="9da62db6-a998-434c-bbe6-4932f84a3fe0" message="Logging after the successful call of exporting the file to location"/>
+		<ee:transform doc:name="Transform to JSON" doc:id="bb2da91d-6c40-40a6-8a42-91310233b6ea" >
+			<ee:message >
+        <ee:set-payload resource="dwl/payload-to-json.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="33250f8d-05f3-43e3-86cc-d115f95ca6f2" message="Logging at the end of flow for Exporting file to Physical Location function "/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="delete-action-flow" doc:id="6bb0aca8-e5a2-4959-be6f-eefcce902b5a" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="7f1b54a0-8d85-492e-be08-dd0b9e9ba0bd" message="Logging at the start of flow for Delete function for Action"/>
+		<ee:transform doc:name="Retrieving action name" doc:id="36b5bc52-ad14-4146-82ee-e7168655e9d8" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="actionName" ><![CDATA[payload[0].deleteActionName]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:execute-delete doc:name="Execute Delete in Anaplan" doc:id="15ba8d5a-c190-40ee-9a9c-88811f6f51d8" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" actionId="#[vars.actionName]"/>
+		<choice doc:name="Check deletion status" doc:id="831eafde-6742-4a94-969c-61ab7a1eacae" >
+			<when expression='#[payload.successful == true]'>
+				<logger level="INFO" doc:name="Logger-success-flow" doc:id="ecb7ee33-296a-4251-a07d-b5fdd65ceb90" message="Logging after successful deletion in Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="98cdd726-65d4-4ec6-a8d3-bf37b8102f6e" >
+					<ee:message >
+            <ee:set-payload resource="dwl/payload-to-json.dwl" />
+					</ee:message>
+				</ee:transform>
+			
+</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-failure-flow" doc:id="090d61e8-b9ba-4270-a8fa-11611a8a2ed9" message="Logging after failed deletion in Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="10d35ab2-00bb-4b24-a16e-6ed0bb38269b" >
+					<ee:message >
+            <ee:set-payload resource="dwl/payload-to-json.dwl" />
+					</ee:message>
+				</ee:transform>
+			
+</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="2cf5fe21-dc33-43b4-8895-9db6ac06db68" message="Logging at the end of flow for Delete function"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="import-only-flow" doc:id="fc75d924-9cb3-4c3f-b835-02a7762ae591" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="2c45a993-b53c-475b-a4f4-6620710a748d" message="Logging at the start of flow for Import Only function"/>
+		<ee:transform doc:name="Retrieving Import name" doc:id="96f042a7-a32f-43a8-beff-19b69ceed1bd">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="importName" ><![CDATA[payload[0].importName]]></ee:set-variable>
+				<ee:set-variable variableName="chunkPath" ><![CDATA[%dw 2.0
+output applicaton/json
+---
+p('import.chunkPath') replace "/C:/" with "C:/"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:execute-import-only doc:name="Execute import only in Anaplan" doc:id="c009ab8e-abc5-4049-8d6f-937c4e2749d3" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" importId="#[vars.importName]"/>
+		<choice doc:name="Choice" doc:id="e5db3875-3ca6-41f1-b8ae-faf5f5c04adc" >
+			<when expression="#[payload.successful == true]">
+				<logger level="INFO" doc:name="Logger-success-flow" doc:id="18e8f788-45d8-4651-8cf3-9331de9974d8" message="Logging after successful Import Only action in Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="588f0768-46df-475a-9b42-d39feb47d4eb">
+					<ee:message>
+						<ee:set-payload resource="dwl/payload-to-json.dwl" />
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-failure-flow" doc:id="b64eff2a-1148-4c17-aad1-16691aec65cd" message="Logging after failed Import Only action in Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="ecfaa958-5767-4493-9fc7-974c5ce2d052" >
+					<ee:message >
+						<ee:set-payload resource="dwl/payload-to-json.dwl" />
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="ef5be361-df4d-4242-8a75-e806d203d1aa" message="Logging at the end of flow for Import Only action in Anaplan"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="describe-anaplan-file-flow" doc:id="086a5fb8-1957-4746-9eb7-447c53eb568f" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="c97606cb-0c86-4d46-af6b-468d096dc76e" message="Logging at the start of flow for Describe Anaplan File function"/>
+		<ee:transform doc:name="Retrieving File name" doc:id="ac1411a4-6415-4ad6-a269-8e6807a05f31" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="fileName" ><![CDATA[payload[0].fileName]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:describe-anaplan-file doc:name="Describe File in Anaplan " doc:id="9f398102-24c8-4ad2-8f07-1a9779ecbee5" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" fileId="#[vars.fileName]"/>
+		<choice doc:name="Choice" doc:id="cf1dc7e6-0d90-4a23-9952-4ae70c85dcb5" >
+			<when expression="#[payload != null]">
+				<logger level="INFO" doc:name="Logger-success-flow" doc:id="d978b1dc-8046-4de6-a3cd-d1e66b0a3cca" message="Logging after successful describe file action in Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="9f6a2eb0-d34a-4d4c-b24c-085dbc4b040a">
+			<ee:message>
+						<ee:set-payload resource="dwl/payload-to-json.dwl" />
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-payload-null" doc:id="151ebb3a-5ece-44ef-a8cf-dc53302c4b42" message="Logging after the describingthe file from Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="f7500a3f-2421-4871-9d8f-2d438dbc8480" >
+					<ee:message >
+						<ee:set-payload resource="dwl/describe-file-null.dwl" />
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="8e8190ef-f39d-48c9-8471-1262a6635b5e" message="Logging at the end of flow for Describe Anaplan File function"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="process-anaplan-flow" doc:id="f7262e82-2c8f-46a1-89d3-64c493f7333b" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="04e9f338-0354-447e-bedf-cbf3fd20b316" message="Logging at the start of flow for executing operations in process in Anaplan"/>
+		<ee:transform doc:name="Retrieving Process name" doc:id="62ef4c67-2fbf-4ac9-9e1a-a2817cc0dc72" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="processName" ><![CDATA[payload[0].processName]]></ee:set-variable>
+				<ee:set-variable variableName="chunkPath" ><![CDATA[%dw 2.0
+output applicaton/json
+---
+p('import.chunkPath') replace "/C:/" with "C:/"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:execute-process processId="#[vars.processName]" doc:name="Execute process in Anaplan" doc:id="9aaec0fb-7023-4413-b6ff-c619801e6445" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" dumpFilePath="#[vars.chunkPath]"/>
+		<choice doc:name="Choice" doc:id="a14efe28-5d90-47bf-baa7-25ebf201e35e" >
+			<when expression="#[payload.successful == true]">
+				<logger level="INFO" doc:name="Logger-success-flow" doc:id="c16aea45-1eac-4bd2-92e6-d8e309cbd365" message="Logging after successful executions of operations in process in Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="db86bbbf-2f5d-4e95-8850-eda3bbd5f6e0" >
+					<ee:message >
+						<ee:set-payload resource="dwl/payload-to-json.dwl" />
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-failure-flow" doc:id="174e2ed6-0e77-4750-81f1-3dc42463896a" message="Logging after failure in exxecution of operations in process in Anaplan "/>
+				<ee:transform doc:name="Response Message" doc:id="cbece1b0-f8a5-4749-9843-e741e7fbc3bb" >
+					<ee:message >
+						<ee:set-payload resource="dwl/payload-to-json.dwl" />
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="c6f9c30e-e5db-4d88-992e-eb4863d5cb5f" message="Logging at the end of flow for executing operations in process in Anaplan"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="upload-file-flow" doc:id="710b3e36-53f2-4631-866d-a13f8483f570" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="7a89d18e-307e-42e8-8ad6-082d66392536" message="Logging at the start of flow for executing upload file to Anaplan"/>
+		<ee:transform doc:name="Retrieving File name" doc:id="9c4a5a0e-1ad1-4347-ba61-e300a2744b38" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="uploadFilePath" ><![CDATA[%dw 2.0
+output applicaton/json
+---
+p('import.filePath') replace "/C:/" with "C:/" ++ payload[0].uploadFileName as String]]></ee:set-variable>
+				<ee:set-variable variableName="chunkPath" ><![CDATA[%dw 2.0
+output applicaton/json
+---
+p('import.chunkPath') replace "/C:/" with "C:/"]]></ee:set-variable>
+				<ee:set-variable variableName="fileName" ><![CDATA[payload[0].uploadFileName]]></ee:set-variable>
+				<ee:set-variable variableName="chunkSize" ><![CDATA[payload[0].chunkSize]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:execute-file-upload-with-files doc:name="Execute File upload to Anaplan" doc:id="d5c7e0b3-c603-4467-b722-e1ad70e29673" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" fileId="#[vars.fileName]" sourceFilePath="#[vars.uploadFilePath]" tmpFolderPath="#[vars.chunkPath]" chunkSize="#[vars.chunkSize]"/>
+		<choice doc:name="Choice" doc:id="39633976-3676-4d1e-b9d9-afd5b85c6e4d" >
+			<when expression="#[payload == 'Success']">
+				<logger level="INFO" doc:name="Logger-success-flow" doc:id="05831fe0-d650-41b9-943c-a0ee47f6f01c" message="Logging after successful upload file to Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="a6a11324-b5d3-43c8-8ce7-f6d91faa98c6" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : "Successfully uploaded file to Anaplan"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-failure-flow" doc:id="8c4af35b-e20f-4ca6-abec-079f8c98c5a9" message="Logging after failure to upload file to Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="2612f39d-17a6-43b3-888f-7e30b97d9d07" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : "Failure in uploading file to Anaplan"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="ae526c9a-cc08-41d4-82e3-873441889565" message="Logging at the end of flow for executing upload file to Anaplan"/>
+	</flow>
+
+</mule>

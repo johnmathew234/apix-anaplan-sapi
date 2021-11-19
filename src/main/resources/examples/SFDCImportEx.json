@@ -1,0 +1,18 @@
+[
+  {
+    "Code__c": "024",
+    "Name": "Josphine Huffer",
+    "Department__c": "Sales",
+    "Country__c": "Brazil",
+    "Region__c": "Americas",
+    "salary__c": "58000"
+  },
+  {
+    "Code__c": "026",
+    "Name": "Theda Dickerson",
+    "Department__c": "Sales",
+    "Country__c": "New Zealand",
+    "Region__c": "Asia Pacific",
+    "salary__c": "45000"
+  }
+]

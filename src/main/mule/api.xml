@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <apikit:config name="apix-anaplan-sapi-config" api="resource::b0beec90-c6cc-4c36-8f7c-ef1f8f91253b:apix-anaplan-sapi:1.0.9:raml:zip:apix-anaplan-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="apix-anaplan-sapi-main">
+        <http:listener config-ref="apiHttpListenerConfig" path="/api/*" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="apix-anaplan-sapi-config" />
+    </flow>
+    <flow name="post:\anaplan-api\deleteAction:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="delete-action-flow" doc:id="5c283696-0ee6-47ac-a6ff-9283bfc7e8e6" name="delete-action-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\describeExport:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="export-describe-flow" doc:id="cce2f577-1b8b-425f-b4bc-b17c874e1c69" name="export-describe-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\describeImport:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="import-describe-flow" doc:id="fe5be03c-e2fd-4a94-bbd8-ec4743d436ad" name="import-describe-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\exportFile:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="export-file-flow" doc:id="cdf30ea2-9874-4730-9ac5-cd318fb574ff" name="export-file-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\exportToSFDC:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="export-to-SFDC-flow" doc:id="9627672c-a67a-4b09-b2fe-956dbb57fc93" name="export-to-SFDC-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\importFile:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="import-file-flow" doc:id="edf97551-8c6f-4fbb-894a-866de4cd1729" name="import-file-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\importFromSFDC:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="import-from-sfdc-to-anaplan-flow" doc:id="eaf8f618-7bbe-4a74-b1a4-ace10484931b" name="import-from-sfdc-to-anaplan-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\uploadFromSFDC:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="upload-file-from-sfdc-flow" doc:id="5bea39fe-10fd-441f-8448-e787a566ec9e" name="upload-file-from-sfdc-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\describeFile:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="describe-anaplan-file-flow" doc:id="43645917-64b4-4924-a3ea-6ed3f3b1bdcf" name="describe-anaplan-file-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\importOnly:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="import-only-flow" doc:id="0903ae3c-b4ca-4a70-ad2f-f23fec73b0d4" name="import-only-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\processAnaplan:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="process-anaplan-flow" doc:id="0900b4f7-11c4-43ce-9793-d5dc9f946665" name="process-anaplan-flow" />
+    </flow>
+    <flow name="post:\anaplan-api\uploadFile:application\json:apix-anaplan-sapi-config">
+        <flow-ref doc:name="upload-file-flow" doc:id="389b11f5-282c-494b-b00d-cf9d23817723" name="upload-file-flow"/>
+    </flow>
+</mule>

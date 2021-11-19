@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="readiness-check-subflow" doc:id="f3df4eac-bffd-4c24-99b1-7c9a9dfe647d" >
+		<ee:transform doc:name="Transform Message" doc:id="6dc5c107-74d7-4992-bd96-ccda515fba82" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="authValue" ><![CDATA[%dw 2.0
+import * from dw::core::Binaries
+output application/json
+---
+toBase64(p('anaplan.username') ++":" ++ p('secure::anaplan.pwd'))]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request" doc:id="366ed352-d531-4db1-95f6-fbe0ccf8c29e" config-ref="HTTP_Request_configuration" path="/token/authenticate">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Basic " ++ vars.authValue as String
+}]]]></http:headers>
+		</http:request>
+		<choice doc:name="Choice" doc:id="1805c863-4eb2-45aa-a756-73b74c87f73b" >
+			<when expression="#[payload != null]">
+				<set-payload value='#[output application/json&#10;---&#10;{"status":"READY"}]' doc:name="Set Payload" doc:id="7d19fe99-cf2f-42f7-90fd-d4c1c8f84962" />
+			</when>
+			<otherwise >
+				<set-payload value='#[output application/json&#10;---&#10;{"status":"NOT READY"}]' doc:name="Set Payload" doc:id="06b9604a-9105-40a5-b620-7d3d9eddb7ed" />
+			</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c1347be9-235c-4660-b9dc-60ada33f3efa" >
+				<logger level="ERROR" doc:name="Logger-error-flow" doc:id="fb3ce820-60fe-4266-9a9b-d29b21204a80" message="Logging the error of readiness check"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

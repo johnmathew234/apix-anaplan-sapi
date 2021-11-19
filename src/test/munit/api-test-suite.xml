@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="api-test-suite.xml" />
+	<munit:test name="describe-export-payload-success-test" doc:id="f77e9899-2b20-44ef-851c-fd2c75d9e636" description="Test">
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="57df2694-4037-4783-b188-a5a5f17118e7">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/describe-export-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="describeExport" doc:id="18cd039c-530b-4610-a2c0-da3fce952808" name="post:\anaplan-api\describeExport:application\json:apix-anaplan-sapi-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="bc155a7e-756b-4594-9227-5a82f4a2b051" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="describe-import-payload-success-test" doc:id="9847ab99-b5ca-4234-9580-20b84c5b4034" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="fbb8ff10-e295-4949-943b-04a7ee1ce32d">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/describe-import-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="describeImport" doc:id="a9eebb21-7ef7-4f36-88ed-c04e11befac6" name="post:\anaplan-api\describeImport:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6c91eba8-b789-4bc0-b576-937f5a6773f8" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="export-file-payload-success-test" doc:id="e5c3a0e7-b1b2-4c6b-8c56-8cc2e2750d73" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="10fca3ba-dd7c-4e14-b049-66775ed33d44">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/export-file-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="exportFile" doc:id="2dea7be5-461b-4b65-8542-df1a337a08d2" name="post:\anaplan-api\exportFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="54ec3529-7576-465a-b104-bb63e303d3b2" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+			<munit-tools:assert doc:name="Assert expression" doc:id="99ea1e03-d47b-4863-80d1-50e3d4ce21f5" message="This is not successful Payload.">
+				<munit-tools:that><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(true)]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-file-payload-success-test" doc:id="ed30e4dd-c78b-48ff-a17b-d0d6b63ee8da" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="61948deb-527f-430a-9b0e-d4c50d62e720">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-file-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="importFile" doc:id="0e7876be-b0c6-4e71-89af-ba50833374a1" name="post:\anaplan-api\importFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="12511cc3-2752-453f-9137-b31b2807f462" message="This is not successful Payload." >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(true)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="eb39de72-cd18-440b-ad9c-5b3f161e695b" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-file-dump-test" doc:id="65516b5b-e74a-42dc-b058-4911ebf08d7d" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="9c3b9d6a-12e2-493d-847f-f16d5624561f">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-file-dump.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="importFile" doc:id="591d9060-4257-4342-b0b5-c1e9fe5be557" name="post:\anaplan-api\importFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="94871b2b-b327-4c4b-8601-87d07643da93" message="This is not successful Payload." >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(false)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d5887d9c-784e-4fae-8262-fd1f8d970f9d" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-file-payload-null" doc:id="89752203-913f-4262-ad37-99701033fbb9" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="e3bf8524-99fb-4969-b96f-2d3005a1b9d0">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-file-null.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="importFile" doc:id="5a90dbf4-fa4d-47a5-b1b5-fc175c08f627" name="post:\anaplan-api\importFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5b654b3f-b439-4b88-a183-aa0a65e8955e" message="Payload is not valid" is="#[MunitTools::allOf([MunitTools::notNullValue(),MunitTools::withMediaType('application/json')])]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delete-action-success" doc:id="44dc01f2-99cc-4e14-86c5-572f99136d0f" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="161b03d6-0694-4894-9716-940dd991991e">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/delete-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="deleteAction" doc:id="165df0d7-a631-43ed-aae4-439fccd2dab7" name="post:\anaplan-api\deleteAction:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="8f58af3d-363d-4770-b1bd-d7fb6aafe16c" message="This is not successful Payload." >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(true)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f40d42af-1d0e-475d-a6e2-1728f5209e5a" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delete-action-error" doc:id="9ec47d17-909e-4305-880c-42b894fa5005" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="83c29b3b-c8a9-46cf-b270-694834d260bd">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/delete-error-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="deleteAction" doc:id="d94e1662-2578-47be-a949-63a23bfe819e" name="post:\anaplan-api\deleteAction:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b5843108-06d0-4e65-803a-340d5848116d" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delete-action-failure" doc:id="9d0293fc-2c2a-4594-b6a5-aea58e992597" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="e00baa7c-01a4-4011-8e3e-9f0b91ca915a" processor="anaplan:execute-delete" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="15ba8d5a-c190-40ee-9a9c-88811f6f51d8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath:///munitResources/delete-failure-mock.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="085a530c-a18f-47cb-b993-517a6fe43ca6">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/delete-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="deleteAction" doc:id="4e3e8e48-631e-4e16-9126-f5ccc54d090f" name="post:\anaplan-api\deleteAction:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="2f797264-7cae-4dcc-a3ff-b193f0f09faf" message="This is not valid Payload.">
+				<munit-tools:that><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(false)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f84e2400-d5f0-432c-97fb-0dce1f9eba33" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="decsribe-export-connectivity-error" doc:id="9542a9a0-eae4-4ba4-9b37-efd97a4d9f1a" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="523fada1-9e7c-4053-ada1-387a2e422b21" processor="anaplan:describe-export" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9e06f412-7202-4f25-9b57-2c63e1dd0988" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANAPLAN:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="10a7917b-f9cf-40df-8061-1a1c7e5852e2">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/describe-export-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="describeExport" doc:id="a86ed6f6-cd0f-47b5-9ba0-a270da28e8f0" name="post:\anaplan-api\describeExport:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="4d937a6d-ba7a-4daa-8922-ce8685226e18" message="Cannot proceed to process with connectivity issues" is="#[MunitTools::allOf([MunitTools::notNullValue(),MunitTools::withMediaType('application/json')])]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="describe-import-connectivity-error" doc:id="15698bd6-52e7-4bcc-97ab-10d4ffe406cf" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="1067888d-57d9-4702-9848-4e654bbcda2b" processor="anaplan:describe-import" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="650ea9e8-bba0-4bc3-907b-21bd3d6097e8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANAPLAN:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="357b1f1d-aec1-401f-aeef-029e6e870f86">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/describe-import-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="describeImport" doc:id="85966eb0-0d5b-4d96-9af3-93c179ac807a" name="post:\anaplan-api\describeImport:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="25f910d0-b301-4c38-933c-dad6a393a140" message="Cannot proceed to process with connectivity issues" is="#[MunitTools::allOf([MunitTools::notNullValue(),MunitTools::withMediaType('application/json')])]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-file-error-test" doc:id="835d38d3-d3bd-4128-a698-97b522a2734c" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="fc9859df-177e-4555-9071-710f25d9da3b">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-file-error-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="importFile" doc:id="0fce0d4e-7d46-4a07-8d8c-498f8f30f724" name="post:\anaplan-api\importFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="fbd2e3f7-56ca-4c3f-b746-2afc72a9f68c" message="Cannot proceed to process with error" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="export-file-error-test" doc:id="00f5c4ad-24cd-4cad-9cf4-aef0faade073" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="6eaf97f2-8edc-46ab-975f-16b523129e8a" processor="anaplan:execute-export-with-files" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0747eef4-6351-47e9-b70f-51360229c907" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANAPLAN:RETRY_EXHAUSTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="0e3927a0-db20-4339-a31b-3c0e059770c7">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/export-file-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="exportFile" doc:id="e1b68ec0-19d9-4dce-9c01-38f3aa2e0dd1" name="post:\anaplan-api\exportFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b723ae81-e5b4-40c7-9756-81a12139c76f" message="Cannot proceed to process with error" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="api-test-bad-request-error" doc:id="461163c4-e477-4f1a-ba46-fbcf7ad98491" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="da82c61a-c45f-4feb-a610-ae48d86b51ea" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="apix-anaplan-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="9600f955-8e1e-4c7f-8298-c11e9b0d21f6" >
+				<flow-ref doc:name="api-kit" doc:id="835df998-2b3f-46ab-99f8-8f763518c8d6" name="apix-anaplan-sapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="94493ae2-9f01-4f7d-bc6b-ed2076ada592" type="ANY" >
+						<logger level="INFO" doc:name="Logger" doc:id="9c0cab41-3b9b-4aa1-9414-b89711b8408f" message="Logging the API-KIT error API-KIT:BAD_REQUEST" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="9a863fef-5911-41c5-b6e9-e847c4eee1be" actual="#[payload.errorCode]" expected="#[400]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="api-test-not-found-error" doc:id="edbd6ad3-e75a-44bd-b04d-08be192e5857" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="6b3fc03a-9141-420f-b809-df9a54aef20a" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="apix-anaplan-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="be4247f1-14f7-4828-8ed0-55d034314e07" >
+				<flow-ref doc:name="api-kit" doc:id="1743e68f-8145-411a-a607-dd108f9e119f" name="apix-anaplan-sapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="5b89d6ce-5520-4dd5-857b-56a8610ac318" type="ANY" >
+						<logger level="INFO" doc:name="Logger" doc:id="2c22d9f5-cbee-4193-b770-d6a7fa0c2cef" message="Logging the API-KIT error API-KIT:NOT_FOUND" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="6ffeac3a-074b-402d-ba36-a0a3961670e9" actual="#[payload.errorCode]" expected="#[404]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-from-sfdc-success-test" doc:id="9fde3f0e-b35a-4b34-ace7-4decbc8216c6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="a894447a-6e05-4367-96ab-20d302ce7843" processor="anaplan:execute-import-streaming">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="71230da1-0b11-4396-ad39-61cf56cb36d0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-sfdc-mock.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="066a7d71-3f9b-4c00-a9ce-7abd9d5eed24">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-from-sfdc-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="import-from-sfdc-flow" doc:id="bc8b5e40-2ac1-42ec-98a5-314a6c0156a2" name="post:\anaplan-api\importFromSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="76a979ce-22f4-41fa-93ad-75b4ca4f537a" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-from-sfdc-anaplan-error" doc:id="0b808f06-6324-4f43-800a-002fa0f17537" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="8348b904-9c4b-45cc-aa92-c3d268c35c11" processor="anaplan:execute-import-streaming" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="71230da1-0b11-4396-ad39-61cf56cb36d0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANAPLAN:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="ff18be34-8b0a-4b5b-ae86-434f360c3b46">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-from-sfdc-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="importFromSFDC" doc:id="958ded53-32f4-409b-9a6f-2553a805890d" name="post:\anaplan-api\importFromSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="9685b169-18ac-4a3a-ba7a-d16c5d4e4f7e" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-from-sfdc-payload-null" doc:id="661377f5-ed27-4a0a-8d47-41e068988b36" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="f9ce08c3-cc58-4c6a-ac2f-20cbe89b5ad5">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-sfdc-null-input.dwl')]" mediaType="application/json" />
+		</munit:set-event>
+			<flow-ref doc:name="importFromSFDC" doc:id="7ddbcd87-c42a-44f5-af17-d6a140840739" name="post:\anaplan-api\importFromSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b3892edc-fb55-4343-815b-2bf3e65e8e47" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-sfdc-salesforce-error" doc:id="566368b5-1a07-41e0-ab10-8a3b8d2ba427" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="e0f1848a-36f7-4ba0-9d67-f076734990c7" processor="salesforce:query-result-stream" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fdda0243-3442-4c89-b4ec-1a19705f1914" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="SALESFORCE:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="01451633-c721-4888-ac74-8e8482a41331">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-sfdc-null-input.dwl')]" mediaType="application/json" />
+		</munit:set-event>
+			<flow-ref doc:name="importFromSFDC" doc:id="6591ff72-79c6-40e3-8502-c4fbf0b78a62" name="post:\anaplan-api\importFromSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="df026c38-c934-4d57-bf7e-9ea23aa04fff" actual="#[payload.errorType]" expected="#['CONNECTIVITY']" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="e7d5c11c-1ff6-4e83-9041-8601746d833e" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="upload-from-sfdc-success" doc:id="9bab9ead-1924-421c-a984-c0e883a05e29" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="f715c9a7-5fab-44c5-8605-265a54d202cf">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/upload-sfdc-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="uploadFromSFDC" doc:id="9da385fd-f944-4e9a-b825-ea0d9ce60356" name="post:\anaplan-api\uploadFromSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1f9855fe-726f-4502-b8b4-390b3d2ca75f" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="upload-from-sfdc-failure" doc:id="790489b2-5939-42cc-91d7-aeedad338e66" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="eb698d3b-f9ba-42c2-ae41-4d3d89d27108" processor="anaplan:execute-file-upload-streaming" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8c46ff24-452e-4b47-8290-3c782f884571" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#["Failed"]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="0cf3bec0-e607-4770-8e76-0f4242f66504">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/upload-sfdc-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="uploadFromSFDC" doc:id="80f479f6-2aa8-4112-af99-3c445046e6b0" name="post:\anaplan-api\uploadFromSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d4c5721a-92ec-4e3c-a478-615d29a8ccf9" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="upload-from-sfdc-payload-null" doc:id="27d836a3-bc06-4150-8020-e2e3eda050a8" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="30023be3-e1be-4f1e-b6ff-efa6370819d9" processor="salesforce:query-result-stream" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fdda0243-3442-4c89-b4ec-1a19705f1914" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[null]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="7da19fe3-1b39-434f-96df-1f86d744f356">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/upload-sfdc-input.dwl')]" mediaType="application/json" />
+		</munit:set-event>
+			<flow-ref doc:name="uploadFromSFDC" doc:id="50f019e6-5f07-4a8e-bbaf-d6c7f1c3be25" name="post:\anaplan-api\uploadFromSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="8cb9b85a-d6ff-4189-b0d6-7d529bfda1f6" message="This is not successful Payload.">
+			<munit-tools:that><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.message as String must contain("null")]]]></munit-tools:that>
+		</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ed7de3f3-a281-4c78-8033-e8d9de5fed66" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="upload-from-sfdc-anaplan-error" doc:id="f4266d68-b7bb-4b1d-9df6-4be017d6897c" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="9e7d6db9-b937-4580-b42b-ab95252378c3" processor="anaplan:execute-file-upload-streaming" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8c46ff24-452e-4b47-8290-3c782f884571" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANAPLAN:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="6f73beeb-4367-45bb-88bb-8a23c781de50">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/upload-sfdc-input.dwl')]" mediaType="application/json" />
+		</munit:set-event>
+			<flow-ref doc:name="uploadFromSFDC" doc:id="d0d19b6c-8b21-4d40-bbfa-d7a98cac7eca" name="post:\anaplan-api\uploadFromSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d1e99af7-4539-4586-9a75-d162ee56371b" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="export-to-sfdc-success" doc:id="a8827f38-2c10-438a-a847-61c6760d3aba" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="ddf7f9db-6035-4484-904d-0dff50895ade">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/export-sfdc-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="exportToSFDC" doc:id="9ccb42a2-0689-4c92-9963-70eb4e91e5f5" name="post:\anaplan-api\exportToSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="533a82d4-6656-4f62-8d3c-d9c7a05e093e" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="export-to-sfdc-sfdc-failure" doc:id="0a964ab3-634f-4d44-80ee-852db7766ba6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="32920fd0-1579-4b4c-90f3-38c78d0514be" processor="salesforce:create-batch-stream">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="009de3b7-4e18-4866-80c1-e5224c2a1701" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="BatchStream" value="#[ output application/java --- {numberRecordsProcessed : 0 } ]" mediaType="application/java" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="4a213823-acaf-435c-bd4f-05da6e6a8794">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/export-sfdc-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="exportToSFDC" doc:id="22eae1fc-0f0d-448f-a474-314b9beb9adb" name="post:\anaplan-api\exportToSFDC:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="0daf19b3-e540-4b5b-a700-792dd134dbc0" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="describe-file-success" doc:id="b1d6fbb0-0d62-4d62-b489-01e0fe1b5d58" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="156b3a0f-f932-4d7b-998e-6629e145e5e5" processor="anaplan:describe-anaplan-file">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9f398102-24c8-4ad2-8f07-1a9779ecbee5" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath:///munitResources/describe-file-mock.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="06e68bb8-2ca2-4b78-b73d-032c6ef3ff81" >
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/describe-file-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="describeAnaplanFile" doc:id="c27aa875-f04e-4b5f-8934-5f7a54af1210" name="post:\anaplan-api\describeFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="fe7884cb-ba19-4dba-9f0f-38df0aa6dc9e" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="describe-file-null" doc:id="a0438e82-b6af-420d-8ed7-449743872e22" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c46f9a6b-534b-4b00-a3a7-e21a7c45e8de" processor="anaplan:describe-anaplan-file">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9f398102-24c8-4ad2-8f07-1a9779ecbee5" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[null]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="4b688b73-5182-4058-a875-498bb42c638b" >
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/describe-file-input.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="describeAnplanFile" doc:id="f063c32a-252b-484c-804e-738e00c5bbf2" name="post:\anaplan-api\describeFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="d9799704-fe6a-48df-b1b8-9b3936ef456c" actual="#[payload]" expected="#[readUrl('classpath:///munitResources/describe-file-null-response.dwl')]" message="Payload is not null"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="describe-file-error" doc:id="a8217e34-5ecf-4a27-b07e-b4f5a2781ba2" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="1f7f6985-d256-4a36-96af-33c41ec4a434" processor="anaplan:describe-anaplan-file" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9f398102-24c8-4ad2-8f07-1a9779ecbee5" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANAPLAN:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="e777d8f2-63d5-4e46-8617-f90dcd259e34">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/describe-file-input.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="describeAnaplanFile" doc:id="d4b54c95-dd1d-4edb-b02e-a31cff31aa8f" name="post:\anaplan-api\describeFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="96a3c315-36f8-44ee-b9fa-a838a7536d28" actual="#[payload.errorType]" expected="#['CONNECTIVITY']" message="Payload is not having any error"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="fe71fd9c-66d4-493b-b8af-6d55dfc6908d" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-only-success" doc:id="fde65438-b4e5-4d3b-aee4-f58752f170e5" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="899f1ee2-6c1e-442b-93d1-47aa7398290f" processor="anaplan:execute-import-only" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c009ab8e-abc5-4049-8d6f-937c4e2749d3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-only-mock.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="b5d4d76f-6e2f-448a-9007-76be8f6ed0ee">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-only-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="importOnly" doc:id="358d9eee-94fc-443d-a7ac-4f71c17f0da5" name="post:\anaplan-api\importOnly:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="c482949d-eae9-49d3-a42e-0dd7481ab544" message="This is not valid Payload.">
+				<munit-tools:that><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(true)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="fc70fde7-6778-4fcf-8c01-d1ebb6138c3c" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-only-failure" doc:id="ff0d16e2-9adf-457f-8126-19e432d22d68" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b17206f7-7538-458f-b08a-0ad9d246dbee" processor="anaplan:execute-import-only" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c009ab8e-abc5-4049-8d6f-937c4e2749d3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-only-mock-failure.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="d76d6cb1-9999-472b-b42e-9856f629368b">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-only-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="importOnly" doc:id="9bc5750a-96f8-42d5-bc33-40dfef0ac91c" name="post:\anaplan-api\importOnly:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="66fdaf08-b95b-4d0d-b599-0c0cd0d7ffb1" message="This is not valid Payload.">
+				<munit-tools:that><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(false)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b3db3c85-3e4d-4aed-8765-091645e01c7c" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="import-only-error" doc:id="e9366edf-99aa-4b20-8e95-f768de079a52" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b9ae50d7-b9d1-4a8d-80e4-555c996e8441" processor="anaplan:execute-import-only" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c009ab8e-abc5-4049-8d6f-937c4e2749d3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANAPLAN:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="32a660b7-89de-4173-92f1-508ac5e8c3a9">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/import-only-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="importOnly" doc:id="0d17099c-bc48-4461-9ef6-0e53e1ad5a6b" name="post:\anaplan-api\importOnly:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="622f6db9-d48e-4b7c-bb07-fc164d5b841d" actual="#[payload.errorType]" expected="#['CONNECTIVITY']" message="Payload is not having any error" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ff51ed30-89de-4f7b-948c-d6ed096ff5f2" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="process-anaplan-success" doc:id="ac318b93-d99b-4380-adbd-b47b844747a0" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="e05ed1be-40d4-4fbe-9fbb-b4777bc2a823" processor="anaplan:execute-process" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9aaec0fb-7023-4413-b6ff-c619801e6445" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath:///munitResources/process-anaplan-mock.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="96afaae0-99cf-4028-8897-7dbaee5b62b7">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/process-anaplan-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="processAnaplan" doc:id="5bba22b0-2b14-4b55-a5e1-b25b35402dfe" name="post:\anaplan-api\processAnaplan:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="bfacaa31-4f03-4856-bd87-02ec4e56a5ad" message="This is not valid Payload." >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(true)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="c342bb6b-2b55-47f0-a942-7bd24a839833" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="process-anaplan-failure" doc:id="11b3f015-c657-4d09-b221-d182a24e2561" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="f60299cd-bc80-4853-938c-ce6c2f5faf5e" processor="anaplan:execute-process" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9aaec0fb-7023-4413-b6ff-c619801e6445" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath:///munitResources/process-anaplan-mock-failure.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="6736a552-c085-47b7-ab9c-21032bdee946">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/process-anaplan-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="processAnaplan" doc:id="28483cc7-b49c-4876-83f4-8b6326698b2d" name="post:\anaplan-api\processAnaplan:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="1e2a32ce-ee7a-431f-be4c-8f2bf21f9c77" message="This is not valid Payload." >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import * from dw::test::Asserts
+---
+payload.successful must equalTo(false)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6cc10ab5-87e3-4dfe-bd49-d333b51cf542" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="process-anaplan-error" doc:id="253d0096-cfc0-48d3-800d-1af7f3218c72" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="40d8aca7-b9c1-4ba3-bf13-622f48dc4d88" processor="anaplan:execute-process" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9aaec0fb-7023-4413-b6ff-c619801e6445" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANAPLAN:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="e36ca97a-afad-4bdb-ad21-701b95b2aad6">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/process-anaplan-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="processAnaplan" doc:id="ec2e2035-ef5d-4b6e-88f4-a7b8a15121a7" name="post:\anaplan-api\processAnaplan:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="5732f445-b662-4cc6-865e-23332881a179" actual="#[payload.errorType]" expected="#['CONNECTIVITY']" message="Payload is not having any error" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="42b09a20-d7b2-4989-809f-9c3f8b6f5d75" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="upload-file-success" doc:id="751616eb-dc71-4935-ac7e-e1e7123f7a26" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bd8035db-ec39-4ba0-bfc5-41ea498d0dc7" processor="anaplan:execute-file-upload-with-files">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="d5c7e0b3-c603-4467-b722-e1ad70e29673" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#["Success"]' mediaType="text/plain" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="8048d82f-a5c1-41ff-b2fb-e4e0122ba075" >
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/upload-file-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="uploadFileFlow" doc:id="a5d1c259-19bd-418f-8d7b-7a2a9258a531" name="post:\anaplan-api\uploadFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="088b2490-c4e8-4cfe-b27e-3e86f16de802" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="upload-file-failure" doc:id="69352cda-720d-48d2-9ec4-ad2827702602" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="7483e38e-7391-41b1-96f7-f6ce7b796e67" processor="anaplan:execute-file-upload-with-files" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="d5c7e0b3-c603-4467-b722-e1ad70e29673" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#["Not Success"]' mediaType="text/plain" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="aeb726b7-acaa-43fb-b9b3-66aaf88b650a">
+				<munit:payload value="#[output application/json --- readUrl('classpath:///munitResources/upload-file-input.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="uploadFileFlow" doc:id="9ed47edf-7b6f-46a5-a2db-36cf2e86cf82" name="post:\anaplan-api\uploadFile:application\json:apix-anaplan-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d5ec99aa-aec9-4072-a16a-65632fef08b5" message="Payload is not valid" is="#[MunitTools::both(MunitTools::notNullValue(),MunitTools::withMediaType('application/json'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

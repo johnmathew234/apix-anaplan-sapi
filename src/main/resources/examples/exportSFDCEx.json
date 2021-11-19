@@ -1,0 +1,5 @@
+[{
+	"sfdcObject": "AnaplanLocation__c",
+    "exportName" : "SYS04 Location Details from Locations.csv"
+	
+}]

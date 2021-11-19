@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:s3="http://www.mulesoft.org/schema/mule/s3"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:anaplan="http://www.mulesoft.org/schema/mule/anaplan"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/anaplan http://www.mulesoft.org/schema/mule/anaplan/current/mule-anaplan.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd">
+	<global-property doc:name="globalPropertyEnv" doc:id="0e627133-48a5-4b64-a557-0d24e0209f98" name="mule.env" value="${mule.env}" />
+	<global-property doc:name="globalPropertySecureKey" doc:id="d384018e-ee2e-4e9f-9372-7144ebf1ec60" name="secure.key" value="${secure.key}" />
+	<configuration-properties doc:name="configurationProperties" doc:id="b72d9a0b-c4da-4f8e-8aa0-af46e3298044" file="properties\common-properties.yaml" />
+	<import doc:name="importCommonError" doc:id="cb5f87a7-a133-42f8-9936-d14ac5d4a85b" file="common-error-handler.xml" />
+	<configuration doc:name="configurationCommonError" doc:id="58428762-5ea8-4a29-8d4a-053e33826ec8" defaultErrorHandler-ref="common-error-handler" />
+	<configuration-properties doc:name="configurationEnvProperties" doc:id="fb714bee-9b4f-4528-bb67-4360e8a594b9" file="properties/secure-${mule.env}.yaml" />
+	<tls:context name="tlsContext" doc:name="TLS Context" doc:id="dd9d034c-cc5c-4eed-a5fd-3cd855b378d8" >
+		<tls:key-store type="${tls.keystore.type}" path="${tls.keystore.path}" alias="${tls.keystore.alias}" keyPassword="${secure::tls.keystore.password}" password="${secure::tls.keystore.keyPassword}" />
+	</tls:context>
+	<secure-properties:config name="securePropertiesConfig" doc:name="Secure Properties Config" doc:id="dd2a864b-f472-4189-82a1-2188ea28c577" file="properties/secure-${mule.env}.yaml" key="${secure.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<http:listener-config name="apiHttpListenerConfig" doc:name="HTTP Listener config">
+        <http:listener-connection host="${https.host}" port="${api.port}" protocol="HTTPS" tlsContext="tlsContext"/>
+    </http:listener-config>
+	<anaplan:config name="anaplanConfig" doc:name="Anaplan Config" doc:id="88389804-b171-40e0-9435-c95347f7f5a1" >
+		<anaplan:basic-auth-connection authHost="${anaplan.authURL}" apiHost="${anaplan.apiURL}" user="${anaplan.username}" password="${secure::anaplan.pwd}" />
+	</anaplan:config>
+	<salesforce:sfdc-config name="salesforceConfig" doc:name="Salesforce Config" doc:id="b862d9c9-c3eb-4b3c-9f0a-caaf7a6b4b44" >
+		<salesforce:basic-connection username="${sfdc.user}" password="${secure::sfdc.pwd}" securityToken="${secure::sfdc.token}" url="${sfdc.authURL}" />
+	</salesforce:sfdc-config>
+	<vm:config name="vmConfig" doc:name="VM Config" doc:id="6bde65c2-b1f9-4cf3-b599-3e06c036a4bc" >
+		<vm:queues >
+			<vm:queue queueName="${vm.queue}" />
+		</vm:queues>
+	</vm:config>
+	<import doc:name="importCommonHealth" doc:id="ffa86f91-5592-45e7-bcb3-067c355dc4b0" file="common-health.xml" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="84d9a8cd-97f3-4f9c-af55-7e3c9e862d3c">
+		<http:request-connection protocol="HTTPS" host="auth.anaplan.com" />
+	</http:request-config>
+
+</mule>

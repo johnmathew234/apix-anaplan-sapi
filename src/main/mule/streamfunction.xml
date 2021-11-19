@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:s3="http://www.mulesoft.org/schema/mule/s3" xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:anaplan="http://www.mulesoft.org/schema/mule/anaplan" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/anaplan http://www.mulesoft.org/schema/mule/anaplan/current/mule-anaplan.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd">
+	<flow name="upload-file-from-sfdc-flow" doc:id="a6ce2a03-f598-45ff-aea4-7d5d35335ba8" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="2b29a9db-edd3-4b02-aadd-33c27fbefa5a" message="Logging at the start of flow for Uploading data to file in Anaplan from Salesforce"/>
+		<ee:transform doc:name="Extract Values from Payload" doc:id="6a80b2c8-e87e-45df-ba54-db8595d1947c" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="sfdcObject" ><![CDATA[payload[0].sfdcObject]]></ee:set-variable>
+				<ee:set-variable variableName="fileName" ><![CDATA[payload[0].fileName 
+
+]]></ee:set-variable>
+				<ee:set-variable variableName="fileChunkSize" ><![CDATA[payload[0].fileChunkSize]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="sfdc-query-subFlow" doc:id="0aafe373-1907-4e55-a896-705bfa876a47" name="sfdc-query-subFlow" />
+		<choice doc:name="Check if SFDC query is not null" doc:id="37c99282-e242-4085-95e7-6b1027c34d3b" >
+			<when expression="#[vars.queryOutput != null]" >
+				<logger level="INFO" doc:name="Logger-not-null-flow" doc:id="0cdaaa1a-080b-4855-a137-541f854f4131" message="Logging once the SFDC query has the valid data and ready to upload in Anaplan "/>
+				<ee:transform doc:name="Transform to Array" doc:id="a00819ed-af23-425b-80b9-9fb37283fc6a" >
+					<ee:message >
+            <ee:set-payload resource="dwl/upload-sfdc-to-array.dwl" />
+					</ee:message>
+				</ee:transform>
+				<ee:transform doc:name="Map to Anaplan Fields" doc:id="b05367cb-24b7-4a11-87f5-09abdbfa7fea" >
+					<ee:message >
+            <ee:set-payload resource="dwl/upload-sfdc-to-anaplan.dwl" />
+					</ee:message>
+				</ee:transform>
+				<ee:transform doc:name="Transform to CSV" doc:id="536ccb0f-27f0-47d1-9ae0-2c5ca431dc23" >
+					<ee:message >
+            <ee:set-payload resource="dwl/upload-sfdc-to-csv.dwl" />
+					</ee:message>
+				</ee:transform>
+				<anaplan:execute-file-upload-streaming fileId="#[vars.fileName]" doc:name="Execute upload streaming to file from sfdc" doc:id="8c46ff24-452e-4b47-8290-3c782f884571" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" chunkSize="#[vars.fileChunkSize]" />
+				<choice doc:name="Check-upload-status" doc:id="39234eb4-d478-42d1-a0f9-bd9d2d0d1978" >
+					<when expression="#[payload == 'Success']" >
+						<logger level="INFO" doc:name="Logger-success-flow" doc:id="3a65f22e-bfaf-43cd-8fe1-9481114216c3" message="Logging after successful Uploading data to file in Anaplan from Salesforce"/>
+						<ee:transform doc:name="Response Message" doc:id="c5483f26-1071-4e77-9400-c9126310ecb1" >
+							<ee:message >
+                <ee:set-payload resource="dwl/upload-sfdc-success.dwl" />
+							</ee:message>
+						</ee:transform>
+					
+</when>
+					<otherwise >
+						<logger level="INFO" doc:name="Logger-failure-flow" doc:id="339258c1-80bf-45eb-b27e-9e4785cef44a" message="Logging after Uploading data to file in Anaplan from Salesforce failed "/>
+						<ee:transform doc:name="Response Message" doc:id="885d9a0c-dced-410b-b468-28bfa52777ca" >
+							<ee:message >
+                <ee:set-payload resource="dwl/upload-sfdc-failure.dwl" />
+							</ee:message>
+						</ee:transform>
+					</otherwise>
+				</choice>
+			
+</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-null-flow" doc:id="f2cf58c4-5e59-4b84-987a-8afdc1d9f058" message="Logging once the SFDC query has null value and not proceeding to Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="da3f0802-48d1-4e97-af4b-70f22ec1064b" >
+					<ee:message >
+            <ee:set-payload resource="dwl/upload-sfdc-null.dwl" />
+					</ee:message>
+				</ee:transform>
+			
+</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="4023e91d-dd3e-4ef8-9eda-c9989ffc0aae" message="Logging at the end of flow for Uploading data to file in Anaplan from Salesforce"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="sfdc-query-subFlow" doc:id="46e9f4df-ac93-4a8b-9436-510ef6ef3e30" >
+		<logger level="INFO" doc:name="Logger-before-sfdc-flow" doc:id="081eaab5-7e55-4178-90a4-01c3b5c1124d" message="Logging before querying data successfully from Salesforce"/>
+		<salesforce:create-job operation="query" type="#[payload[0].sfdcObject]" doc:name="Create job for query" doc:id="f16efec3-861f-4e7e-8452-46455bb0cc73" config-ref="salesforceConfig" target="queryJobID" >
+			<salesforce:create-job-request ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "externalIdFieldName": "External_ID__c",
+    "contentType" : "JSON",
+    "concurrencyMode": "Serial"  //Serial or Parallel
+}]]]></salesforce:create-job-request>
+		</salesforce:create-job>
+		<salesforce:create-batch-for-query doc:name="Create batch for query" doc:id="2e8e46ee-3764-4546-b918-1047d9c6dbfd" config-ref="salesforceConfig" target="batchQuery" jobInfoBatchForQuery="#[vars.queryJobID]" >
+			<salesforce:batch-query ><![CDATA[select Name,Country__c,Code__c,Region__c from AnaplanLocation__c]]></salesforce:batch-query>
+		</salesforce:create-batch-for-query>
+		<salesforce:close-job doc:name="Close job of query" doc:id="bfa83718-5621-41c0-825d-62c52a79ea49" config-ref="salesforceConfig" jobId="#[vars.queryJobID.id]" />
+		<salesforce:query-result-stream doc:name="Query from SFDC" doc:id="fdda0243-3442-4c89-b4ec-1a19705f1914" config-ref="salesforceConfig" contentType="JSON" target="queryOutput" >
+			<salesforce:batch-to-retrieve ><![CDATA[#[vars.batchQuery]]]></salesforce:batch-to-retrieve>
+		</salesforce:query-result-stream>
+		<logger level="INFO" doc:name="Logger-after-sfdc-flow" doc:id="217349a3-9045-47b1-bc5e-bf99301a26ee" message="Logging after querying data successfully from Salesforce "/>
+	</flow>
+	<flow name="import-from-sfdc-to-anaplan-flow" doc:id="80c262fb-9be4-4480-b522-55c407f9f17b" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="c49ef49e-2e57-4996-8200-391cecf0f747" message="Logging at the start of flow for Importing data to Anaplan from Salesforce"/>
+		<ee:transform doc:name="Extract Values from Payload" doc:id="7d33c9d0-3d5f-419b-887d-7ab780997381" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="importName" ><![CDATA[payload[0].importName 
+
+]]></ee:set-variable>
+				<ee:set-variable variableName="importChunkSize" ><![CDATA[payload[0].importChunkSize]]></ee:set-variable>
+				<ee:set-variable variableName="sfdcObject" ><![CDATA[payload[0].sfdcObject]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="sfdc-query-subFlow" doc:id="a20e2301-ecdd-48ca-809b-8b8e951ee67e" name="sfdc-query-subFlow"/>
+		<choice doc:name="Check if SFDC query is not null" doc:id="9c026520-1070-4a95-98e1-983ad943061f" >
+			<when expression="#[vars.queryOutput != null]" >
+				<logger level="INFO" doc:name="Logger-not-null-flow" doc:id="7add1fe3-f4c9-48f5-9ed3-7e4a49985308" message="Logging once the SFDC query has the valid data and ready to import in Anaplan "/>
+				<ee:transform doc:name="Transform to Array" doc:id="ee2383d9-e214-474c-829a-a55dbc9a2c34" >
+					<ee:message >
+            <ee:set-payload resource="dwl/import-sfdc-to-array.dwl" />
+					</ee:message>
+				</ee:transform>
+				<ee:transform doc:name="Map to Anaplan Fields" doc:id="ec31cb41-f8b5-4720-8412-0a8fe5141c69" >
+					<ee:message >
+            <ee:set-payload resource="dwl/import-sfdc-to-anaplan.dwl" />
+					</ee:message>
+				</ee:transform>
+				<ee:transform doc:name="Transform to CSV" doc:id="44e48b12-5f41-43a9-b117-b1579f2ea86c" >
+					<ee:message >
+            <ee:set-payload resource="dwl/import-sfdc-to-csv.dwl" />
+					</ee:message>
+				</ee:transform>
+				<anaplan:execute-import-streaming importId="#[vars.importName]" doc:name="Execute import streaming to Anaplan" doc:id="71230da1-0b11-4396-ad39-61cf56cb36d0" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" chunkSize="#[vars.importChunkSize]" />
+				<choice doc:name="Check-import-status" doc:id="c81562b8-6dcb-4253-a72c-fb709b13499c" >
+					<when expression="#[payload.successful == true]" >
+						<logger level="INFO" doc:name="Logger-success-flow" doc:id="bafa4c98-22b0-4d46-9b40-ccdb9ee21ce1" message="Logging after successful Importing data to Anaplan from Salesforce" />
+						<ee:transform doc:name="Response Message" doc:id="aa460afb-3158-4573-89e1-ba71b7947851" >
+							<ee:message >
+                <ee:set-payload resource="dwl/payload-to-json.dwl" />
+							</ee:message>
+						</ee:transform>
+					
+</when>
+					<otherwise >
+						<ee:transform doc:name="Response Message" doc:id="1ee7e4e8-b016-443d-b2a6-55c5d0ea0917" >
+							<ee:message >
+                <ee:set-payload resource="dwl/payload-to-json.dwl" />
+							</ee:message>
+						</ee:transform>
+						<logger level="INFO" doc:name="Logger-failure-flow" doc:id="5a5b064e-7e0a-482c-88f6-d9532c47d074" message="Logging after Importing data to Anaplan from Salesforce failed"/>
+					
+</otherwise>
+				</choice>
+			
+</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-null-flow" doc:id="0d9c1343-8a6a-40ce-bff0-db5f48f02d55" message="Logging once the SFDC query has null value and not proceeding to Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="a8413633-ed6e-49ec-b066-6ba2376edf3f" >
+					<ee:message >
+            <ee:set-payload resource="dwl/import-sfdc-to-null.dwl" />
+					</ee:message>
+				</ee:transform>
+			
+</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="f6e4cc6d-8cbe-4b6a-b929-59854275993d" message="Logging at the end of flow for Importing data to Anaplan from Salesforce"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+	<flow name="export-to-SFDC-flow" doc:id="d37664e5-a018-483e-a3ca-24a4c5ad5186" >
+		<logger level="INFO" doc:name="Logger-start-flow" doc:id="50787c43-c2e2-4638-a767-bbfa64ed4498" message="Logging at the start of flow for Exporting data from Anaplan to Salesforce"/>
+		<ee:transform doc:name="Extract Values from Payload" doc:id="7bdbd788-2b81-474e-b8c6-8faff1bc6c1c">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="sfdcObject"><![CDATA[payload[0].sfdcObject]]></ee:set-variable>
+				<ee:set-variable variableName="exportName" ><![CDATA[payload[0].exportName 
+
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<anaplan:execute-export-streaming exportId="#[vars.exportName]" doc:name="Execute export streaming" doc:id="92f83798-7ffa-4024-933d-3ae0c216c467" config-ref="anaplanConfig" workspaceId="${secure::anaplan.workspaceID}" modelId="${secure::anaplan.modelID}" />
+		<choice doc:name="Choice" doc:id="4d3de7b1-2529-46c2-b056-a6b9073bf9c0" >
+			<when expression="#[payload.successful == true]">
+				<logger level="INFO" doc:name="Logger-anaplan-success" doc:id="0ba17ff8-63f9-4091-8a56-966aeafff3c1" message="Logging after exporting data from Anaplan"/>
+				<vm:publish queueName="${vm.queue}" doc:id="7a3631a1-8ec2-4c7a-afb8-917d26ef2cf2" config-ref="vmConfig" sendCorrelationId="NEVER" doc:name="Publish to VM queue">
+					<vm:content ><![CDATA[#[payload.fileStream]]]></vm:content>
+
+		</vm:publish>
+				<vm:consume queueName="${vm.queue}" doc:id="48d0e4d3-5586-4fbd-8ae8-86b7a30ff2c1" config-ref="vmConfig" doc:name="Consume from VM queue" timeout="30" />
+				<ee:transform doc:name="Map Data to SFDC Fields" doc:id="ff19d5ef-d90e-4c2c-9086-8d1fece58886">
+			<ee:message>
+            <ee:set-payload resource="dwl/export-sfdc-to-sfdc.dwl" />
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+				<ee:transform doc:name="Transform to JSON" doc:id="c904c593-a1b4-48d4-bbdd-8c9c174fd51d">
+			<ee:message>
+            <ee:set-payload resource="dwl/export-sfdc-to-json.dwl" />
+			</ee:message>
+		</ee:transform>
+				<salesforce:create-job operation="insert" type="#[vars.sfdcObject]" doc:name="Create job for Batch Stream" doc:id="7f01ffd7-9380-446d-8bc9-f4fee96c8dc7" config-ref="salesforceConfig" target="JobID">
+			<salesforce:create-job-request><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+    "externalIdFieldName": "External_ID__c",
+    "contentType" : "JSON",
+    "concurrencyMode": "Serial"  //Serial or Parallel
+}]]]></salesforce:create-job-request>
+		</salesforce:create-job>
+				<salesforce:create-batch-stream doc:name="Create batch stream in Salesforce" doc:id="009de3b7-4e18-4866-80c1-e5224c2a1701" config-ref="salesforceConfig" target="BatchStream" jobInfoBatchStream="#[vars.JobID]" />
+				<salesforce:close-job doc:name="Close Job for Batch Stream" doc:id="d9957dc7-fba6-4721-9f71-a67cc8f517b9" config-ref="salesforceConfig" jobId="#[vars.JobID.id]" />
+				<choice doc:name="Check status ofSFDC insert " doc:id="9b438d61-173d-487c-96dd-d44d5716b0cb">
+			<when expression="#[vars.BatchStream.numberRecordsProcessed &gt; 0]">
+				<logger level="INFO" doc:name="Logger-sfdc-success" doc:id="8390ff29-71ea-4d4b-94ec-0520a13164c3" message="Logging after successfully updating the batch data to Salesforce from Anaplan"/>
+						<ee:transform doc:name="Response Message" doc:id="f4e2878c-6241-4622-b499-e93468a063fd">
+							<ee:message>
+                <ee:set-payload resource="dwl/export-sfdc-success.dwl" />
+							</ee:message>
+						</ee:transform>
+			
+</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger-sfdc-failure" doc:id="7581dc31-49e2-4dd5-b067-e7a3774a160c" message="Logging after failure in updating the batch data to Salesforce from Anaplan"/>
+						<ee:transform doc:name="Response Message" doc:id="84f9a412-e630-48e9-a1f4-dbadbb6f0095">
+							<ee:message>
+                <ee:set-payload resource="dwl/export-sfdc-failure.dwl" />
+							</ee:message>
+						</ee:transform>
+			
+</otherwise>
+		</choice>
+			
+</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger-sfdc-failure" doc:id="e635022d-b904-4c84-8bc8-62280a0904c5" message="Logging after failure in exporting stream data from Anaplan"/>
+				<ee:transform doc:name="Response Message" doc:id="5f8bc63a-68ba-449e-8ce5-b72cc82108f2">
+					<ee:message>
+            <ee:set-payload resource="dwl/payload-to-json.dwl" />
+					</ee:message>
+				</ee:transform>
+			
+</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger-end-flow" doc:id="bde80ac3-79e7-4f23-ac29-6c53af867a4f" message="Logging at the end of flow for Exporting data from Anaplan to Salesforce"/>
+		<error-handler ref="custom-error-handler" />
+	</flow>
+</mule>

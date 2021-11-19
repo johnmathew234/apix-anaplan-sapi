@@ -1,0 +1,70 @@
+output application/java 
+---
+ {
+  nestedResults: null,
+  dumpFiles: null,
+  failureDumpAvailable: true,
+  objectName: null,
+  details: [
+    {
+      occurrences: 0,
+      values: [
+        "hierarchyName", 
+        "P2 Products", 
+        "successRowCount", 
+        "53", 
+        "successCreateCount", 
+        "0", 
+        "successUpdateCount", 
+        "53", 
+        "warningsRowCount", 
+        "0", 
+        "warningsCreateCount", 
+        "0", 
+        "warningsUpdateCount", 
+        "0", 
+        "failedCount", 
+        "0", 
+        "ignoredCount", 
+        "0", 
+        "totalRowCount", 
+        "53", 
+        "totalCreateCount", 
+        "0", 
+        "totalUpdateCount", 
+        "53", 
+        "invalidCount", 
+        "0", 
+        "updatedCount", 
+        "53", 
+        "renamedCount", 
+        "53", 
+        "createdCount", 
+        "0"
+      ],
+      "type": "hierarchyRowsProcessed",
+      localMessageText: "P2 Products: 53 (0/53) rows successful,3 failed, 1 ignored ",
+      valueMap: {
+        ignoredCount: "0",
+        totalUpdateCount: "53",
+        warningsUpdateCount: "0",
+        successUpdateCount: "53",
+        hierarchyName: "P2 Products",
+        totalCreateCount: "0",
+        warningsCreateCount: "0",
+        successRowCount: "53",
+        failedCount: "0",
+        updatedCount: "53",
+        invalidCount: "0",
+        renamedCount: "53",
+        successCreateCount: "0",
+        warningsRowCount: "0",
+        totalRowCount: "53",
+        createdCount: "0"
+      }
+    }
+  ],
+  rowCount: 0,
+  objectId: "112000000034",
+  successful: false
+}

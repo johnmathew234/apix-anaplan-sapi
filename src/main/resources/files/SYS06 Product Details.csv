@@ -1,0 +1,54 @@
+P2 Products,Code,Product Family,Size,Product to be deleted
+Nutzo Bar,P001,Chocolates,100g,true
+Raising the Bar,P002,Chocolates,200g,true
+Cookie Crumbs,P003,Chocolates,300g,true
+Do-nutty Buncha Munch,P004,Chocolates,400g,true
+Nougats-N-Cream,P005,Chocolates,500g,true
+Nougatacious,P006,Chocolates,100g,false
+High noon bar,P007,Chocolates,200g,false
+CooCoolicious,P008,Chocolates,300g,false
+That's a Fine Howdy Do!,P009,Chocolates,400g,false
+Dr. Mocho,P010,Chocolates,500g,false
+Craklin Nikklins,P011,Chocolates,100g,false
+Franutbutter Krisp,P012,Chocolates,200g,false
+Unichunky Krisp,P013,Chocolates,300g,false
+PlanutButter Krisp,P014,Chocolates,400g,false
+Anapoppers,P015,Sours,500g,false
+Juicy Lucy gummies,P016,Sours,100g,false
+Bite Me!,P017,Sours,200g,false
+LocoMongo,P018,Sours,300g,false
+Smacker Packer,P019,Sours,400g,false
+Sweet-n-Swirlie,P020,Sours,500g,false
+Souroly polies,P021,Sours,100g,false
+TinyBarns,P022,Sours,200g,false
+Wibbles,P023,Sours,300g,false
+Rompers,P024,Sours,400g,false
+HyperLemones,P025,Sours,500g,false
+AnaFrazzles,P026,Sours,100g,false
+Connected sweeties,P027,Sours,200g,false
+Blasters,P028,Sours,300g,false
+SF Bay Water Taffy,P029,Taffy,400g,false
+Viking Cream,P030,Taffy,500g,false
+Rocket Fizz,P031,Taffy,100g,false
+The York Chew,P032,Taffy,200g,false
+The Crusher,P033,Taffy,300g,false
+Ana-lisious,P034,Taffy,400g,false
+Bubbles Salt Water Taffy,P035,Taffy,500g,false
+Hypercrusher,P036,Taffy,100g,false
+ChewyBlock,P037,Taffy,200g,false
+The Big Apple,P038,Taffy,300g,false
+Funky Town,P039,Taffy,400g,false
+Twisted Ana,P040,Taffy,500g,false
+Corny Chew,P041,Taffy,100g,false
+Berry Jet,P042,Taffy,200g,false
+Connutty,P043,Fudge,300g,false
+Bay Sludge Fudge,P044,Fudge,400g,false
+Fuddy Duddy,P045,Fudge,500g,false
+Fudgy Block,P046,Fudge,100g,false
+Goulden Nugget Fudge,P047,Fudge,500g,false
+Moscone,P048,Fudge,500g,false
+The Hubba Bubba,P049,Fudge,500g,false
+CPX (Cashews and peanuts),P050,Fudge,500g,false
+Marshmallow Hub,P051,Fudge,500g,false
+Mud city,P052,Fudge,500g,false
+PlanItfudge,P053,Fudge,500g,false

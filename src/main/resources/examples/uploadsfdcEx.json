@@ -1,0 +1,8 @@
+[
+	{
+	 
+    "sfdcObject": "AnaplanLocation__c",
+    "fileName" : "SYS04 Location Details from Locations.csv",
+    "fileChunkSize" : 5
+	}
+]

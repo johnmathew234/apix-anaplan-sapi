@@ -1,0 +1,31 @@
+anaplan:
+  username : "pappu22padma@gmail.com"
+  authURL : "https://auth.anaplan.com"
+  apiURL : "https://api.anaplan.com"
+  workspaceID : "![R7Qapph2UebxgnrCUk7pK0mfVfHcdIDXVyUeAoG1Qvgoht3VHBG++Q==]"
+  modelID: "![ihZvE2dY5uPt8NhpzkT507Wi4KZY+dXNBoGnPgckml0epcvUkk8IAQ==]"
+  pwd : "![Q8fjbOELyBZx/6roHZ/8Lw==]"
+  token : "![MJuV9ubI64LfaGCGYc2iNyJpP0UDQaObkJQ+Q61c8Ka1OXtmVll6Rg==]"
+
+sfdc:
+  authURL : "https://login.salesforce.com/services/Soap/u/52.0"
+  user : "padmavathy.k@njclabs.com"
+  pwd : "![Q8fjbOELyBaERoZy3TK5cA==]"
+  token : "![Aqr7a1gdR0s727/vYvggMW0fcZOdibI97l3yE5Owf1w=]"
+
+tls.keystore:
+  type: "pkcs12"
+  path: "certs/apix-anaplan-sapi-prod.p12"
+  alias: "server"
+  password: "![TjrgNiKb/sw=]"
+  keyPassword: "![TjrgNiKb/sw=]"
+  
+vm:
+  queue: "anaplanStreamQueue"
+  
+import:
+  filePath: "${mule.home}/apps/${app.name}/files/"
+  chunkPath : "${mule.home}/apps/${app.name}/files/"
+  
+export:
+  filePath: "${mule.home}/apps/${app.name}/files/"

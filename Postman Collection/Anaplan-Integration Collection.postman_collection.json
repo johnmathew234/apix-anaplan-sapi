@@ -1,0 +1,578 @@
+{
+	"info": {
+		"_postman_id": "6e826018-68d8-4e80-a64f-b0753a89da12",
+		"name": "Anaplan-Integration Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Delete Action",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "121dsdsds",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "12asad",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "d123dfdfdd",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "asasd",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "12343jsndsjf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n\t \r\n     \"deleteActionName\" : \"Delete Prev Employees\"\r\n\t}\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/deleteAction",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"deleteAction"
+					]
+				},
+				"description": "Delete Action Anaplan"
+			},
+			"response": []
+		},
+		{
+			"name": "Describe Import",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "asa234",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "wew12aad",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "12sfdfd",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n        \"importName\" : \"Load Employee Details\",\r\n        \"localeName\": \"en_US\",\r\n        \"mappingParameters\":[{\"entityType\":\"Version\", \"entityName\":\"Actual\"}]\r\n}]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/describeImport",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"describeImport"
+					]
+				},
+				"description": "Describe Import in Anaplan"
+			},
+			"response": []
+		},
+		{
+			"name": "Export File from Anaplan",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "sdfd34",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "12aesad",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "sd232",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n   \"exportName\": \"SYS08 Employee Details.xls\"\r\n}]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/exportFile",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"exportFile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import File to Anaplan",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "h123j",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "12sdsds",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "23wrer",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n\t\"importName\": \"P2 Products from SYS06 Product Details\",\r\n    \"importFileName\" : \"SYS06 Product Details.csv\",\r\n    \"chunkSize\" : 10\r\n\t}\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/importFile",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"importFile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Describe Export",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "hh232dd",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "23wesdsd",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "as343sdsfs",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n[{\r\n        \"exportName\" : \"DATA01 P&L Actual and Budget - Headcount.xls\",\r\n        \"localeName\": \"en_US\",\r\n        \"mappingParameters\":[{\"entityType\":\"Version\", \"entityName\":\"Actual\"}]\r\n}]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/describeExport",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"describeExport"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import From SFDC",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "hh2323hh",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "121asad",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "323dsfs",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n\t \r\n    \"sfdcObject\": \"AnaplanLocation__c\",\r\n    \"importName\" : \"Load Locations\",\r\n    \"importChunkSize\" : 5\r\n\t}\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/importFromSFDC",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"importFromSFDC"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload File From SFDC",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "hh67hh",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "12adasda",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "232sfsfsf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n\t \r\n    \"sfdcObject\": \"AnaplanLocation__c\",\r\n    \"fileName\" : \"Location.csv\",\r\n    \"fileChunkSize\" : 5\r\n\t}\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/uploadFromSFDC",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"uploadFromSFDC"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Export To SFDC",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "hxewew2323",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "12aesdad",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "232dsds",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n\t \r\n    \"sfdcObject\": \"AnaplanEmployee__c\",\r\n    \"exportName\" : \"Employee Details.csv\"\r\n\t}\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/exportToSFDC",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"exportToSFDC"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Only",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "123wwe",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "232ada",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "12sdsd",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n    \"importName\" : \"P2 Products from SYS06 Product Details\"\r\n\t}\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/importOnly",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"importOnly"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Describe Anaplan File",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "12sdsf3",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "12dsd",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "ssf1212",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n    \"fileName\" : \"SYS06 Product Details.csv\"\r\n\t}\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/describeFile",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"describeFile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Run Process in Anaplan",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "sds2323",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "13jhjh",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "ww3223",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n    \"processName\" : \"Build SYS06 Product Details\"\r\n\t}\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/processAnaplan",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"processAnaplan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload File",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-correlation-id",
+						"value": "sds232",
+						"type": "text"
+					},
+					{
+						"key": "client_id",
+						"value": "sds7878",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "dsfd878",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n\t{\r\n        \"uploadFileName\" : \"SYS06 Product Details.csv\",\r\n        \"chunkSize\" : 1\r\n\t}\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/api/anaplan-api/uploadFile",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"anaplan-api",
+						"uploadFile"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

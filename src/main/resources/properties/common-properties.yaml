@@ -1,0 +1,13 @@
+https:
+  host: "0.0.0.0"
+  
+api: 
+  groupId: ${project.groupId}
+  artifactId: ${project.artifactId}
+  version: ${project.version}
+  spec: resource::${project.groupId}:${project.artifactId}:${project.version}:oas:zip:api.json
+  majorVersion: "v1"
+  listenerConfig: "apiHttpListenerConfig"
+  port: "8082"
+ 
+
